@@ -3,7 +3,7 @@ import pandas as pd
 
 @st.cache_data
 def load_data():
-    # CSV 파일이 프로젝트 폴더에 있어야 합니다.
+    # 프로젝트 폴더 내 waste_data.csv 파일을 읽습니다.
     return pd.read_csv("waste_data.csv")
 
 data = load_data()
@@ -11,10 +11,11 @@ data = load_data()
 st.title("♻️ 분리도우미")
 st.markdown("쓰레기의 **정확한 분리배출 방법**과 **환경 영향**을 알아보세요!")
 
-query = st.text_input("🔍 분리배출 방법이 궁금한 쓰레기를 입력하세요 (예: 페트병, 종이컵 등)")
+query = st.text_input("🔍 분리배출 방법이 궁금한 쓰레기를 입력하세요 (예: 페트병, 종이컵 등)").strip()
 
 if query:
-    result = data[data['name'].str.contains(query.strip(), case=False, na=False)]
+    # 이름 컬럼에서 검색어 포함된 행을 찾음 (대소문자 구분 안 하고, 정규식 끔)
+    result = data[data['name'].str.contains(query, case=False, na=False, regex=False)]
 
     if not result.empty:
         for _, row in result.iterrows():
