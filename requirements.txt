@@ -1,0 +1,32 @@
+import streamlit as st
+import pandas as pd
+
+# 데이터 불러오기
+@st.cache_data
+def load_data():
+    return pd.read_csv('waste_data.csv')
+
+data = load_data()
+
+# 제목
+st.title("♻️ 분리도우미")
+st.subheader("분리배출 방법과 환경 영향을 알아보세요")
+
+# 사용자 입력
+query = st.text_input("쓰레기 이름을 입력하세요 (예: 페트병, 종이컵)")
+
+if query:
+    result = data[data['name'].str.contains(query)]
+    
+    if not result.empty:
+        for _, row in result.iterrows():
+            st.markdown(f"### 🗑️ {row['name']}")
+            st.write(f"**카테고리**: {row['category']}")
+            st.write(f"**라벨 분리 여부**: {row['label_separation']}")
+            st.write(f"**뚜껑 분리 여부**: {row['cap_separation']}")
+            st.write(f"**세척 필요 여부**: {row['wash_required']}")
+            st.write(f"**재활용 가능 여부**: {row['recyclable']}")
+            st.write(f"**재질**: {row['material']}")
+            st.info(f"🌱 분해 시간: {row['decompose_time']}")
+    else:
+        st.warning("일치하는 항목이 없습니다. 더 구체적으로 입력해보세요.")
